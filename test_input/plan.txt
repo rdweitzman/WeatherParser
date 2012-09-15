@@ -1,0 +1,62 @@
+Problem statement:
+
+Weather data text needs to be extracted from two files, Daily_lister and individual_days. This weather data needs to be formatted correctly into easy to read output, with proper column headers including units, as well as a breakout of the dates for each line item. 
+
+The daily_lister file corresponds to the entire month's worth of hourly data for 1-31 August.
+The individual_days file contains the hourly data for a given date.
+
+Requested variables (column headers) from each file are as follows-
+- in the daily_lister file - all except the battery voltage
+- in the individual_days file - all 
+
+Additional date formatting request-
+- YRMTHDAYHHMM  YRMTH DAY HHMM  followed by the various data headings.
+
+Proposed Plan:
+Read in each file (either from the html or as a copy and pasted text document).
+
+For each of these lines, use white spaces as delimeters. There are 11 columns (0-10) in daily_lister, and there are 10 columns (0-9) in the individual_days
+
+++Column headers, individual_days
+
+Hour of Day    Average            Wind Velocity Direction    Maximum            Air Temperature    Relative Humidity    Dew Point    Wet Bulb    
+               (Meters/Second)    (Degree)                   (Meters/Second)    (Mean)             (Mean/Percent)                    (Deg. C)
+
+Barometric Pressure    Total Precipitation
+(millibar pressure)    (Millimeters)
+
+++Column headers, daily_lister
+
+YRMTHDAYHHMM    YRMTH DAY HHMM    Precipitation    Wind Speed    Wind Direction    Average Air Temperature    Fuel Temperature    Relative Humidity
+								  (inches)         (mph)         (degrees)         (degrees F)                (degrees F)         (percentage)
+
+Battery Voltage    Max Gust Direction    Max Gust Speed    Solar Radiation
+(volts)            (degrees)             (mph)             (watts/meters squared)
+
+Using spaces as delimeters, insert each piece of data into the column corresponding with the index of the data. Increase that index after every insertion.
+
+++++Class Design::
+
+Class Reader
+	Class used to read in a file and store it in a data structure
+Class Formatter
+	Class used to format the data read in from the file.
+Class Writer
+	Class used to output the properly formatted text into a file. 
+
+Class Reader:
+	Function init(filename):: used to load the file associated to the filename
+	Function readFile:: reads in the file and returns the datastructure containing the file
+	Function setFile(filename):: used to set a different filename into memory. destroys previous file read into memory
+	Function printFile:: used to display the file for troubleshooting
+
+Class Formatter:
+	Function init(fileObject):: sets up the formatter object with the file object created by the reader
+	Function format:: performs formatting operations on the file object
+	Function setObject:: sets file object to some new object
+	Function printObject:: prints the object for troubleshooting
+
+Class Writer:
+	Function init(formattedObject):: inits with the formatted object
+	Function writeObject(fileName):: writes the formatted object to a file with the specified filename
+	Function printObject:: prints for troubleshooting
