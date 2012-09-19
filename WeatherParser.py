@@ -32,7 +32,7 @@ class WeatherReader:
 		'''used to display the file for troubleshooting'''
 		print self.dataList
 
-class IndividualWeatherFormatter:
+class IndividualDaysFormatter:
 	'''Class used to format the data that was read in from the file.'''
 
 	def __init__(self, fileObject_in, convertToMetricFlag_in):
@@ -76,6 +76,7 @@ class IndividualWeatherFormatter:
 				item.insert(3, " ")
 		
 		return listOfRows
+
 
 	def individualHeaders(self):
 		''' creates the headers for the IndivudualWeatherFormatter columns'''
@@ -163,12 +164,15 @@ class DailyListerFormatter:
 			row.insert(0, totalDateTime[i])
 			i += 1
 
-		#check flag and if true, then convert from imperial to metric units
-		if flag == True:
+		#check flag and if true, then convert from imperial to metric units and add the appropriate headers
+		if flag: 
 			rows = self.convertToMetric(rows)
+			headers, subheaders = self.conversionHeaders()
+		else:
+			#add regular headers
+			headers, subheaders = self.individualHeaders()
 
 		# add headers
-		headers, subheaders = self.individualHeaders()
 		rows.insert(0, subheaders)
 		rows.insert(0, headers)
 
@@ -176,8 +180,39 @@ class DailyListerFormatter:
 
 	def convertToMetric(self, rows):
 		#perform conversion to metric line by line on those elements that need them 
+		#columns 4,5,7,8,12 need conversion
 		for i in rows:
-			print i
+			#if the values in column 4,5,7,8,or 12 are greater than 0, perform the following conversions
+			
+			if float(i[4]) > 0:
+				#convert inches to millimeters
+				toConvert = float(i[4])
+				converted = toConvert * (25.4/1)
+				i[4] = converted
+			
+			if float(i[5]) > 0:
+				#convert mph to kmph
+				toConvert = float(i[5])
+				converted = toConvert * (1.60934/1)
+				i[5] = converted				
+			
+			if float(i[7]) > 0:
+				#convert Fahrenheit to Celsius
+				toConvert = float(i[7])
+				converted = ((toConvert - 32) * 5) / 9
+				i[7] = converted
+
+			if float(i[8]) > 0:
+				#convert Fahrenheit to Celsius
+				toConvert = float(i[8])
+				converted = ((toConvert - 32) * 5) / 9
+				i[8] = converted
+				
+			if float(i[12]) > 0:
+				#convert mph to kmph
+				toConvert = float(i[12])
+				converted = toConvert * (1.60934/1)
+				i[12] = converted	
 
 		return rows
 
@@ -185,6 +220,13 @@ class DailyListerFormatter:
 		''' creates the headers for the columns'''
 		headers = ["YRMTHDAYHHMM", "YRMTH", "DAY", "HHMM", "Precipitation", "Wind Speed", "Wind Direction", "Average Air Temperature", "Fuel Temperature", "Relative Humidity", "Battery Voltage", "Max Gust Direction", "Max Gust Speed", "Solar Radiation"]
 		subheaders = ["-", "-", "-", "-", "(inches)", "(mph)", "(degrees)", "(degrees F)", "(degrees F)", "(percentage)", "(volts)", "(degrees)", "(mph)", "(watts/meters squared)"]
+
+		return headers, subheaders
+
+	def conversionHeaders(self):
+		''' creates the headers for the columns using converted units instead of the raw units (imperial to metric)'''
+		headers = ["YRMTHDAYHHMM", "YRMTH", "DAY", "HHMM", "Precipitation", "Wind Speed", "Wind Direction", "Average Air Temperature", "Fuel Temperature", "Relative Humidity", "Battery Voltage", "Max Gust Direction", "Max Gust Speed", "Solar Radiation"]
+		subheaders = ["-", "-", "-", "-", "(mm)", "(kmph)", "(degrees)", "(degrees C)", "(degrees C)", "(percentage)", "(volts)", "(degrees)", "(kmph)", "(watts/meters squared)"]
 
 		return headers, subheaders
 
@@ -245,7 +287,7 @@ def main():
 	#monthly weather data in individual days
 	readerObject_month = WeatherReader("Individual_Days.txt")
 	fileContainer_month = readerObject_month.readFile()
-	formatObject_month = IndividualWeatherFormatter(fileContainer_month)
+	formatObject_month = IndividualDaysFormatter(fileContainer_month)
 	formattedObject_month = formatObject_month.format()
 	weatherWrite_month = WeatherWriter(formattedObject_month, "IndividualDays_csvOutput.csv")
 	

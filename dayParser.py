@@ -1,6 +1,6 @@
 def main():
 	import csv, sys, os, glob
-	from WeatherParser import WeatherReader, IndividualWeatherFormatter, WeatherWriter
+	from WeatherParser import WeatherReader, IndividualDaysFormatter, WeatherWriter
 	'''
 		Runs on the "Individual_Days" type text files
 		Runs on all textfiles in the directory, converting them to csv files.
@@ -28,7 +28,7 @@ def main():
 	    #read file in
 	    fileContainer_month = readerObject_month.readFile()
 	    #format file
-	    formatObject_month = IndividualWeatherFormatter(fileContainer_month, convertToMetricFlag)
+	    formatObject_month = IndividualDaysFormatter(fileContainer_month, convertToMetricFlag)
 	    formattedObject_month = formatObject_month.format()
 	    #write out file as csv
 	    weatherWrite_month = WeatherWriter(formattedObject_month, "imperial_" + files +".csv")

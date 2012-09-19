@@ -18,9 +18,13 @@ def main():
 	
 	if argument == "-c":
 		convertToMetricFlag = True
+		filePrefix = "metric_"
+	else:
+		filePrefix = "imperial_"
 
 	#loop through files in this directory
 	os.chdir("../RAWS_hourly/months")
+	#os.chdir("test_input/dailyLister")
 	for files in glob.glob("*.txt"):
 	    #print files
 	    #create object with filename
@@ -31,5 +35,5 @@ def main():
 	    formatObject_day = DailyListerFormatter(fileContainer_day, convertToMetricFlag)
 	    formattedObject_day = formatObject_day.format()
 	    #write out file as csv
-	    weatherWrite_day = WeatherWriter(formattedObject_day, "imperial_" + files +".csv")
+	    weatherWrite_day = WeatherWriter(formattedObject_day, filePrefix + files +".csv")
 main()
